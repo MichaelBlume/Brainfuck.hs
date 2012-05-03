@@ -36,6 +36,7 @@ getLength = do
   (prog, _jt) <- ask
   return . length $ prog
 
+parseProg :: [Char] -> BFRead
 parseProg src = (terseSrc, jt) where
   terseSrc = filter (`elem` "<>+-.,[]") src
   jt = getJT terseSrc [] [] 0
