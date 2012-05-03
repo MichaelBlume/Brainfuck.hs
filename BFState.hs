@@ -39,7 +39,7 @@ incIP = do
   put (tape, ip + 1)
 
 tapeZero :: BFMon Bool
-tapeZero = readTapeM >>= (return . (==0))
+tapeZero = fmap (==0) readTapeM
 
 blankState :: BFState
 blankState = (blankTape, 0)
