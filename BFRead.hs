@@ -3,6 +3,7 @@ import Types
 import BFMon
 
 lookupJump :: JumpTable -> Int -> Int
+lookupJump [] n = error "program parse fail?"
 lookupJump ((a, b): js) n
   | a == n = b
   | b == n = a
