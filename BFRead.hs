@@ -18,7 +18,7 @@ lookupJump ((a, b): js) n
 
 getJT :: BFMon JumpTable
 getJT = do
-  (_prog, jt) <- ask
+  (_prog, jt, _length) <- ask
   return jt
 
 lookupJumpM :: Int -> (BFMon Int)
@@ -28,16 +28,16 @@ lookupJumpM i = do
 
 lookupIns :: Int -> (BFMon Char)
 lookupIns i = do
-  (prog, _jt) <- ask
+  (prog, _jt, _length) <- ask
   return $ prog !! i
 
 getLength :: (BFMon Int)
 getLength = do
-  (prog, _jt) <- ask
-  return . length $ prog
+  (prog, _jt, length) <- ask
+  return length
 
 parseProg :: String -> BFRead
-parseProg src = (terseSrc, jt) where
+parseProg src = (terseSrc, jt, length terseSrc) where
   terseSrc = filter (`elem` "<>+-.,[]") src
   jt = getJT terseSrc [] [] 0
 

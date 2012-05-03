@@ -13,4 +13,4 @@ type BFState = (Tape, Int)
 type JumpTable = [(Int, Int)]
 type BFProg = String
 
-type BFRead = (BFProg, JumpTable)
+type BFRead = (BFProg, JumpTable, Int)
