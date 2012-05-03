@@ -1,6 +1,13 @@
-module Tape where
-
-import Control.Monad.State
+module Tape
+( Tape ()
+, advance
+, retreat
+, increment
+, decrement
+, writeTape
+, readTape
+, blankTape
+) where
 
 data Tape = Tape [Int] Int [Int]
 

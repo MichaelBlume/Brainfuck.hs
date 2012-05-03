@@ -1,4 +1,10 @@
-module Types where
+module Types
+( BFState
+, JumpTable
+, BFProg
+, BFRead
+) where
+
 import Tape
 
 type BFState = (Tape, Int)

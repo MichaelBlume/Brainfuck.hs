@@ -1,5 +1,13 @@
 {-# LANGUAGE TypeSynonymInstances #-}
-module BFMon where
+module BFMon
+( BFMon (runBF)
+, ask
+, put
+, get
+, putCharBF
+, getCharBF
+) where
+
 import Types
 
 newtype BFMon a = BFMon {

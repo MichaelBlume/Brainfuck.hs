@@ -1,7 +1,10 @@
+module Main (main) where
+
 import Tape
 import BFMon
 import BFRead
 import BFState
+
 import Data.Char
 import System.Environment
 

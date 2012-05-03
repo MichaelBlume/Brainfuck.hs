@@ -1,4 +1,12 @@
-module BFState where
+module BFState
+( modTape
+, readTapeM
+, getIP
+, setIP
+, incIP
+, blankState
+) where
+
 import Types
 import BFMon
 import Tape

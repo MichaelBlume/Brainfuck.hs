@@ -1,4 +1,10 @@
-module BFRead where
+module BFRead
+( lookupJumpM
+, lookupIns
+, getLength
+, parseProg
+) where
+
 import Types
 import BFMon
 
