@@ -2,27 +2,29 @@
 module BFMon where
 import Types
 
-type BFMon a = BFRead -> BFState -> IO (BFState, a)
+newtype BFMon a = BFMon {
+  runBF :: BFRead -> BFState -> IO (BFState, a)
+}
 
 bind :: (BFMon a) -> (a -> BFMon b) -> BFMon b
 bind m1 f r s = do
-  (s', a) <- m1 r s
+  (s', a) <- runBF m1 r s
   f a r s'
 
-instance (Monad a) (BFMon a) where
-  (>>=) = bind
-  return x r s = (s, x)
+instance Monad BFMon where
+  (>>=) m f = BFMon $ \r -> \s -> bind m f r s
+  return x = BFMon $ \r -> \s -> (s, x)
 
 -- emulate read
 ask :: BFMon BFRead
-ask r s = return (s, r)
+ask = BFMon $ \r -> \s -> return (s, r)
 
 -- emulate state
 put :: BFState -> BFMon ()
-put s' r _s = return (s', ())
+put s' = BFMon $ \r -> \_s -> return (s', ())
 get :: BFMon BFState
-get r s = return (s, s)
+get = BFMon $ \r -> \s -> return (s, s)
 
 -- emulate IO
-putCharBF c r s = putChar c
-getCharBF r s = getChar
+putCharBF c = BFMon $ \r -> \s -> putChar c
+getCharBF = BFMon $ \r -> \s -> getChar

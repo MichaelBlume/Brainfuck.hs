@@ -21,7 +21,7 @@ doCommand ']' = do
     then return ()
     else doJump
 
-runBF :: BFMon () = do
+loopBF :: BFMon () = do
   ins <- getIn
   doCommand ins
   incIP
