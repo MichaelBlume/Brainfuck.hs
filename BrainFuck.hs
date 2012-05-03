@@ -10,8 +10,8 @@ doCommand '<' = modTape retreat
 doCommand '>' = modTape advance
 doCommand '+' = modTape increment
 doCommand '-' = modTape decrement
-doCommand '.' = getCharBF >>= (modTape . writeTape . ord)
-doCommand ',' = readTapeM >>= (putCharBF . chr)
+doCommand ',' = getCharBF >>= (modTape . writeTape . ord)
+doCommand '.' = readTapeM >>= (putCharBF . chr)
 doCommand '[' = do
   ts <- readTapeM
   if ts == 0
