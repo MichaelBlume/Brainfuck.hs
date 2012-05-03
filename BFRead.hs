@@ -36,12 +36,12 @@ getLength = do
   (prog, _jt) <- ask
   return . length $ prog
 
-parseProg :: [Char] -> BFRead
+parseProg :: String -> BFRead
 parseProg src = (terseSrc, jt) where
   terseSrc = filter (`elem` "<>+-.,[]") src
   jt = getJT terseSrc [] [] 0
 
-  getJT :: [Char] -> JumpTable -> [Int] -> Int -> JumpTable
+  getJT :: String -> JumpTable -> [Int] -> Int -> JumpTable
   getJT [] jt [] _ = jt
   getJT [] _ lStack _ = error "unmatched left brackets"
   getJT ('[':is) jt lStack ip = getJT is jt (ip:lStack) (ip+1)

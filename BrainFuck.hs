@@ -7,6 +7,7 @@ import BFState
 
 import Data.Char
 import System.Environment
+import Control.Monad
 
 doCommand :: Char -> BFMon ()
 doCommand '<' = modTape retreat
@@ -16,15 +17,11 @@ doCommand '-' = modTape decrement
 doCommand ',' = getCharBF >>= (modTape . writeTape . ord)
 doCommand '.' = readTapeM >>= (putCharBF . chr)
 doCommand '[' = do
-  ts <- readTapeM
-  if ts == 0
-    then doJump
-    else return ()
+  tz <- tapeZero
+  when tz doJump
 doCommand ']' = do
-  ts <- readTapeM
-  if ts == 0
-    then return ()
-    else doJump
+  tz <- tapeZero
+  unless tz doJump
 
 loopBF :: BFMon ()
 loopBF = do
@@ -33,9 +30,7 @@ loopBF = do
   incIP
   ip <- getIP
   l <- getLength
-  if ip == l
-    then return ()
-    else loopBF
+  unless (ip == l) loopBF
 
 doJump :: BFMon ()
 doJump = do
@@ -43,20 +38,18 @@ doJump = do
   ip' <- lookupJumpM ip
   setIP ip'
 
-getIn = do
-  ip <- getIP
-  lookupIns ip
+getIn = getIP >>= lookupIns
 
 main :: IO ()
 main = do
   args <- getArgs
-  if (length args) == 0
+  if null args
     then putStrLn "Must include filename of BF program"
     else do
-      progSrc <- readFile $ args !! 0
+      progSrc <- readFile $ head args
       runProg progSrc
 
-runProg :: [Char] -> IO ()
+runProg :: String -> IO ()
 runProg progSrc = do
   let prog = parseProg progSrc
   let state = blankState

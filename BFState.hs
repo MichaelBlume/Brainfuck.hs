@@ -5,6 +5,7 @@ module BFState
 , setIP
 , incIP
 , blankState
+, tapeZero
 ) where
 
 import Types
@@ -36,6 +37,9 @@ incIP :: BFMon ()
 incIP = do
   (tape, ip) <- get
   put (tape, ip + 1)
+
+tapeZero :: BFMon Bool
+tapeZero = readTapeM >>= (return . (==0))
 
 blankState :: BFState
 blankState = (blankTape, 0)
