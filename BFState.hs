@@ -11,6 +11,7 @@ module BFState
 import Types
 import BFMon
 import Tape
+import Control.Monad
 
 
 modTape :: (Tape -> Tape) -> BFMon ()
@@ -39,7 +40,7 @@ incIP = do
   put (tape, ip + 1)
 
 tapeZero :: BFMon Bool
-tapeZero = fmap (==0) readTapeM
+tapeZero = liftM (==0) readTapeM
 
 blankState :: BFState
 blankState = (blankTape, 0)
