@@ -8,6 +8,7 @@ module BFMon
 ) where
 
 import Types
+import System.IO
 
 newtype BFMon a = BFMon {
   runBF :: BFRead -> BFState -> IO (BFState, a)
@@ -36,6 +37,7 @@ get = BFMon $ \r -> \s -> return (s, s)
 putCharBF :: Char -> BFMon ()
 putCharBF c = BFMon $ \r -> \s -> do
   putChar c
+  hFlush stdout
   return (s, ())
 getCharBF :: BFMon Char
 getCharBF = BFMon $ \r -> \s -> do
