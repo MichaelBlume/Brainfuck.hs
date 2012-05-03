@@ -7,13 +7,13 @@ newtype BFMon a = BFMon {
 }
 
 bind :: (BFMon a) -> (a -> BFMon b) -> BFMon b
-bind m1 f r s = do
+bind m1 f = BFMon $ \r -> \s -> do
   (s', a) <- runBF m1 r s
-  f a r s'
+  runBF (f a) r s'
 
 instance Monad BFMon where
-  (>>=) m f = BFMon $ \r -> \s -> bind m f r s
-  return x = BFMon $ \r -> \s -> (s, x)
+  (>>=) = bind
+  return x = BFMon $ \r -> \s -> return (s, x)
 
 -- emulate read
 ask :: BFMon BFRead
@@ -26,5 +26,11 @@ get :: BFMon BFState
 get = BFMon $ \r -> \s -> return (s, s)
 
 -- emulate IO
-putCharBF c = BFMon $ \r -> \s -> putChar c
-getCharBF = BFMon $ \r -> \s -> getChar
+putCharBF :: Char -> BFMon ()
+putCharBF c = BFMon $ \r -> \s -> do
+  putChar c
+  return (s, ())
+getCharBF :: BFMon Char
+getCharBF = BFMon $ \r -> \s -> do
+  c <- getChar
+  return (s, c)

@@ -18,3 +18,24 @@ lookupJumpM :: Int -> (BFMon Int)
 lookupJumpM i = do
   jt <- getJT
   return $ lookupJump jt i
+
+lookupIns :: Int -> (BFMon Char)
+lookupIns i = do
+  (prog, _jt) <- ask
+  return $ prog !! i
+
+getLength :: (BFMon Int)
+getLength = do
+  (prog, _jt) <- ask
+  return . length $ prog
+
+parseProg src = (terseSrc, jt) where
+  terseSrc = filter (`elem` "<>+-.,[]") src
+  jt = getJT terseSrc [] [] 0
+
+  getJT :: [Char] -> JumpTable -> [Int] -> Int -> JumpTable
+  getJT [] jt [] _ = jt
+  getJT [] _ lStack _ = error "unmatched left brackets"
+  getJT ('[':is) jt lStack ip = getJT is jt (ip:lStack) (ip+1)
+  getJT (']':is) jt (l:lStack) ip = getJT is ((l, ip):jt) lStack (ip+1)
+  getJT (_:is) jt lStack ip = getJT is jt lStack (ip+1)

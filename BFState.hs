@@ -1,6 +1,7 @@
 module BFState where
 import Types
 import BFMon
+import Tape
 
 
 modTape :: (Tape -> Tape) -> BFMon ()
@@ -27,3 +28,6 @@ incIP :: BFMon ()
 incIP = do
   (tape, ip) <- get
   put (tape, ip + 1)
+
+blankState :: BFState
+blankState = (blankTape, 0)
