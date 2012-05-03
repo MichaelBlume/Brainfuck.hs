@@ -47,9 +47,14 @@ getIn = do
   ip <- getIP
   lookupIns ip
 
+main :: IO ()
 main = do
   args <- getArgs
   progSrc <- readFile $ args !! 0
+  runProg progSrc
+
+runProg :: [Char] -> IO ()
+runProg progSrc = do
   let prog = parseProg progSrc
   let state = blankState
   runBF loopBF prog state
