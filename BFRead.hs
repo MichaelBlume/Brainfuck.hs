@@ -1,21 +1,20 @@
+module BFRead where
+import Types
+import BFMon
+
 lookupJump :: JumpTable -> Int -> Int
 lookupJump ((a, b): js) n
   | a == n = b
   | b == n = a
   | otherwise = lookupJump js n
 
-type JumpTable = [(Int, Int)]
-type BFProg = [Char]
 
-type BFRead a = Reader (BFProg, JumpTable) a
-
-lookupJumpM :: Int -> BFRead Int
-lookupJumpM i = do
+getJT :: BFMon JumpTable
+getJT = do
   (_prog, jt) <- ask
-  return $ lookupJump jt i
+  return jt
 
-doJump :: BFMon ()
-doJump = do
-  ip <- getIP
-  ip' <- lookupJumpM ip
-  setIP ip'
+lookupJumpM :: Int -> (BFMon Int)
+lookupJumpM i = do
+  jt <- getJT
+  return $ lookupJump jt i
