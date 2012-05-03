@@ -50,8 +50,11 @@ getIn = do
 main :: IO ()
 main = do
   args <- getArgs
-  progSrc <- readFile $ args !! 0
-  runProg progSrc
+  if (length args) == 0
+    then putStrLn "Must include filename of BF program"
+    else do
+      progSrc <- readFile $ args !! 0
+      runProg progSrc
 
 runProg :: [Char] -> IO ()
 runProg progSrc = do
