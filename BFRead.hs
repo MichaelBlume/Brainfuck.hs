@@ -3,12 +3,16 @@ module BFRead
 , lookupIns
 , getLength
 , parseProg
+, BFRead ()
 ) where
 
-import Types
-import BFMon
+import RSI
+import Data.Array
 
-import Array
+type JumpTable = [(Int, Int)]
+type BFProg = Array Int Char
+
+type BFRead = (BFProg, JumpTable, Int)
 
 lookupJump :: JumpTable -> Int -> Int
 lookupJump [] n = error "program parse fail?"
@@ -18,22 +22,22 @@ lookupJump ((a, b): js) n
   | otherwise = lookupJump js n
 
 
-getJT :: BFMon JumpTable
+getJT :: RSI BFRead state JumpTable
 getJT = do
   (_prog, jt, _length) <- ask
   return jt
 
-lookupJumpM :: Int -> (BFMon Int)
+lookupJumpM :: Int -> (RSI BFRead state Int)
 lookupJumpM i = do
   jt <- getJT
   return $ lookupJump jt i
 
-lookupIns :: Int -> (BFMon Char)
+lookupIns :: Int -> (RSI BFRead state Char)
 lookupIns i = do
   (prog, _jt, _length) <- ask
   return $ prog ! i
 
-getLength :: (BFMon Int)
+getLength :: (RSI BFRead state Int)
 getLength = do
   (prog, _jt, length) <- ask
   return length

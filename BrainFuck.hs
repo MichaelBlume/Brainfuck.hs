@@ -1,21 +1,23 @@
 module Main (main) where
 
 import Tape
-import BFMon
 import BFRead
 import BFState
+import RSI
 
 import Data.Char
 import System.Environment
 import Control.Monad
+
+type BFMon = RSI BFRead BFState
 
 doCommand :: Char -> BFMon ()
 doCommand '<' = modTape retreat
 doCommand '>' = modTape advance
 doCommand '+' = modTape increment
 doCommand '-' = modTape decrement
-doCommand ',' = getCharBF >>= (modTape . writeTape . ord)
-doCommand '.' = readTapeM >>= (putCharBF . chr)
+doCommand ',' = getCharRSI >>= (modTape . writeTape . ord)
+doCommand '.' = readTapeM >>= (putCharRSI . chr)
 doCommand '[' = do
   tz <- tapeZero
   when tz doJump
@@ -53,7 +55,7 @@ runProg :: String -> IO ()
 runProg progSrc = do
   let prog = parseProg progSrc
   let state = blankState
-  runBF loopBF prog state
+  runRSI loopBF prog state
   return ()
 
 

@@ -6,40 +6,41 @@ module BFState
 , incIP
 , blankState
 , tapeZero
+, BFState ()
 ) where
 
-import Types
-import BFMon
+import RSI
 import Tape
 import Control.Monad
 
+type BFState = (Tape, Int)
 
-modTape :: (Tape -> Tape) -> BFMon ()
+modTape :: (Tape -> Tape) -> RSI read BFState ()
 modTape tf = do
   (tape, ip) <- get
   put (tf tape, ip)
 
-readTapeM :: BFMon Int
+readTapeM :: RSI read BFState Int
 readTapeM = do
   (tape, _ip) <- get
   return $ readTape tape
 
-getIP :: BFMon Int
+getIP :: RSI read BFState Int
 getIP = do
   (_tape, ip) <- get
   return ip
 
-setIP :: Int -> BFMon ()
+setIP :: Int -> RSI read BFState ()
 setIP n = do
   (tape, _ip) <- get
   put (tape, n)
 
-incIP :: BFMon ()
+incIP :: RSI read BFState ()
 incIP = do
   (tape, ip) <- get
   put (tape, ip + 1)
 
-tapeZero :: BFMon Bool
+tapeZero :: RSI read BFState Bool
 tapeZero = liftM (==0) readTapeM
 
 blankState :: BFState
