@@ -8,6 +8,8 @@ module BFRead
 import Types
 import BFMon
 
+import Array
+
 lookupJump :: JumpTable -> Int -> Int
 lookupJump [] n = error "program parse fail?"
 lookupJump ((a, b): js) n
@@ -29,7 +31,7 @@ lookupJumpM i = do
 lookupIns :: Int -> (BFMon Char)
 lookupIns i = do
   (prog, _jt, _length) <- ask
-  return $ prog !! i
+  return $ prog ! i
 
 getLength :: (BFMon Int)
 getLength = do
@@ -37,7 +39,7 @@ getLength = do
   return length
 
 parseProg :: String -> BFRead
-parseProg src = (terseSrc, jt, length terseSrc) where
+parseProg src = (fromList terseSrc, jt, length terseSrc) where
   terseSrc = filter (`elem` "<>+-.,[]") src
   jt = getJT terseSrc [] [] 0
 
@@ -47,3 +49,5 @@ parseProg src = (terseSrc, jt, length terseSrc) where
   getJT ('[':is) jt lStack ip = getJT is jt (ip:lStack) (ip+1)
   getJT (']':is) jt (l:lStack) ip = getJT is ((l, ip):jt) lStack (ip+1)
   getJT (_:is) jt lStack ip = getJT is jt lStack (ip+1)
+
+  fromList l = array (0, (length l) - 1) $ zip [0..] l

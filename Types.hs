@@ -6,11 +6,12 @@ module Types
 ) where
 
 import Tape
+import Array
 
 type BFState = (Tape, Int)
 
 
 type JumpTable = [(Int, Int)]
-type BFProg = String
+type BFProg = Array Int Char
 
 type BFRead = (BFProg, JumpTable, Int)
