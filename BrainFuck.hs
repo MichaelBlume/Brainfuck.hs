@@ -69,8 +69,8 @@ main = do
       fastPutStr $ runProg progSrc inputS
 
 fastPutStr :: String -> IO ()
-fastPutStr [] = return ()
-fastPutStr (c:cs) = putChar c >> hFlush stdout >> fastPutStr cs
+fastPutStr = foldr helper (return ()) where
+  helper c rst = putChar c >> hFlush stdout >> rst
 
 
 
