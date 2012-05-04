@@ -8,18 +8,15 @@ module BFRead
 
 import RSI
 import Data.Array
+import qualified Data.Map as Map
 
-type JumpTable = [(Int, Int)]
+type JumpTable = Map.Map Int Int
 type BFProg = Array Int Char
 
 type BFRead = (BFProg, JumpTable, Int)
 
 lookupJump :: JumpTable -> Int -> Int
-lookupJump [] n = error "program parse fail?"
-lookupJump ((a, b): js) n
-  | a == n = b
-  | b == n = a
-  | otherwise = lookupJump js n
+lookupJump = (Map.!)
 
 
 getJT :: RSI BFRead state JumpTable
@@ -39,19 +36,19 @@ lookupIns i = do
 
 getLength :: (RSI BFRead state Int)
 getLength = do
-  (prog, _jt, length) <- ask
+  (_prog, _jt, length) <- ask
   return length
 
 parseProg :: String -> BFRead
 parseProg src = (fromList terseSrc, jt, length terseSrc) where
   terseSrc = filter (`elem` "<>+-.,[]") src
-  jt = getJT terseSrc [] [] 0
+  jt = Map.fromList $ getJT terseSrc [] [] 0
 
-  getJT :: String -> JumpTable -> [Int] -> Int -> JumpTable
+  getJT :: String -> [(Int, Int)] -> [Int] -> Int -> [(Int, Int)]
   getJT [] jt [] _ = jt
   getJT [] _ lStack _ = error "unmatched left brackets"
   getJT ('[':is) jt lStack ip = getJT is jt (ip:lStack) (ip+1)
-  getJT (']':is) jt (l:lStack) ip = getJT is ((l, ip):jt) lStack (ip+1)
+  getJT (']':is) jt (l:lStack) ip = getJT is ((ip, l):(l, ip):jt) lStack (ip+1)
   getJT (_:is) jt lStack ip = getJT is jt lStack (ip+1)
 
   fromList l = array (0, (length l) - 1) $ zip [0..] l
