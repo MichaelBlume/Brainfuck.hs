@@ -13,7 +13,7 @@ newtype RSI read state a = RSI {
   runRSI :: read -> state -> IO (state, a)
 }
 
-bind :: (RSI read state a) -> (a -> RSI read state b) -> RSI read state b
+bind :: RSI read state a -> (a -> RSI read state b) -> RSI read state b
 bind m1 f = RSI $ \r -> \s -> do
   (s', a) <- runRSI m1 r s
   runRSI (f a) r s'
