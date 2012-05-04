@@ -6,7 +6,7 @@ module BFRead
 , BFRead ()
 ) where
 
-import RSI
+import RS
 import Data.Array
 import qualified Data.Map as Map
 
@@ -19,22 +19,22 @@ lookupJump :: JumpTable -> Int -> Int
 lookupJump = (Map.!)
 
 
-getJT :: RSI BFRead state JumpTable
+getJT :: RS BFRead state JumpTable
 getJT = do
   (_prog, jt, _length) <- ask
   return jt
 
-lookupJumpM :: Int -> RSI BFRead state Int
+lookupJumpM :: Int -> RS BFRead state Int
 lookupJumpM i = do
   jt <- getJT
   return $ lookupJump jt i
 
-lookupIns :: Int -> RSI BFRead state Char
+lookupIns :: Int -> RS BFRead state Char
 lookupIns i = do
   (prog, _jt, _length) <- ask
   return $ prog ! i
 
-getLength :: RSI BFRead state Int
+getLength :: RS BFRead state Int
 getLength = do
   (_prog, _jt, length) <- ask
   return length
