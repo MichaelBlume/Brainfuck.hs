@@ -32,6 +32,7 @@ loopBF = do
     Nothing -> return result
     Just c -> return $ c:result
 
+endLoop :: BFMon String
 endLoop = do
   l <- getLength
   ip <- getIP
