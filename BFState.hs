@@ -15,30 +15,29 @@ import RS
 import Tape
 import Control.Monad
 
-type BFState = (Tape, Int, String, Maybe Char)
+data BFState = BFState { tape :: Tape
+                       , instructionPointer :: Int
+                       , remainingInput :: String
+                       }
 
 type MC = Maybe Char
 
 modTape :: (Tape -> Tape) -> RS read BFState MC
 modTape tf = do
-  (tape, ip, i, c) <- get
-  put (tf tape, ip, i, c)
+  state <- get
+  put state {tape = (tf . tape $ state)}
   return Nothing
 
 readTapeM :: RS read BFState Int
-readTapeM = do
-  (tape, _ip, _i, _c) <- get
-  return $ readTape tape
+readTapeM = liftM (readTape . tape) get
 
 getIP :: RS read BFState Int
-getIP = do
-  (_tape, ip, _i, _c) <- get
-  return ip
+getIP = liftM instructionPointer get
 
 setIP :: Int -> RS read BFState ()
 setIP n = do
-  (tape, _ip, i, c) <- get
-  put (tape, n, i, c)
+  state <- get
+  put state {instructionPointer = n}
 
 incIP :: RS read BFState ()
 incIP = getIP >>= (setIP . (+1))
@@ -47,13 +46,13 @@ tapeZero :: RS read BFState Bool
 tapeZero = liftM (==0) readTapeM
 
 blankState :: String -> BFState
-blankState inputString = (blankTape, 0, inputString, Nothing)
+blankState inputString = BFState blankTape 0 inputString
 
 getCharS :: RS read BFState Char
 getCharS = do
-  (tape, ip, i, c) <- get
-  case i of
+  state <- get
+  case remainingInput state of
     [] -> return '\n'
     (ic:ics) -> do
-      put (tape, ip, ics, c)
+      put state {remainingInput = ics}
       return ic
