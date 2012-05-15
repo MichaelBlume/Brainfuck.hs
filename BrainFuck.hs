@@ -12,26 +12,27 @@ import System.IO
 
 type BFMon = RS BFRead BFState
 
-doCommand :: Char -> BFMon ()
+doCommand :: Char -> BFMon MC
 doCommand '<' = modTape retreat
 doCommand '>' = modTape advance
 doCommand '+' = modTape increment
 doCommand '-' = modTape decrement
 doCommand ',' = getCharS >>= (modTape . writeTape . ord)
-doCommand '.' = readTapeM >>= (putCharS . chr)
+doCommand '.' = liftM (Just . chr) readTapeM
 doCommand '[' = do
   tz <- tapeZero
   when tz doJump
+  return Nothing
 doCommand ']' = do
   tz <- tapeZero
   unless tz doJump
+  return Nothing
 
 loopBF :: BFMon String
 loopBF = do
   ins <- getIn
-  doCommand ins
+  mc <- doCommand ins
   incIP
-  mc <- popCharS
   result <- endLoop
   case mc of
     Nothing -> return result
