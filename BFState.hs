@@ -41,9 +41,7 @@ setIP n = do
   put (tape, n, i, c)
 
 incIP :: RS read BFState ()
-incIP = do
-  (tape, ip, i, c) <- get
-  put (tape, ip + 1, i, c)
+incIP = getIP >>= (setIP . (+1))
 
 tapeZero :: RS read BFState Bool
 tapeZero = liftM (==0) readTapeM

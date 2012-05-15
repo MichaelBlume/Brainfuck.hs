@@ -19,14 +19,8 @@ doCommand '+' = modTape increment
 doCommand '-' = modTape decrement
 doCommand ',' = getCharS >>= (modTape . writeTape . ord)
 doCommand '.' = liftM (Just . chr) readTapeM
-doCommand '[' = do
-  tz <- tapeZero
-  when tz doJump
-  return Nothing
-doCommand ']' = do
-  tz <- tapeZero
-  unless tz doJump
-  return Nothing
+doCommand '[' = tapeZero >>= (`when` doJump) >> return Nothing
+doCommand ']' = tapeZero >>= (`unless` doJump) >> return Nothing
 
 loopBF :: BFMon String
 loopBF = do

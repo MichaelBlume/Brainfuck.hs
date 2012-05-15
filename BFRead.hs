@@ -25,9 +25,7 @@ getJT = do
   return jt
 
 lookupJumpM :: Int -> RS BFRead state Int
-lookupJumpM i = do
-  jt <- getJT
-  return $ lookupJump jt i
+lookupJumpM i = getJT >>= (return . (`lookupJump` i))
 
 lookupIns :: Int -> RS BFRead state Char
 lookupIns i = do
