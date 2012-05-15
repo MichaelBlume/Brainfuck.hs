@@ -44,8 +44,9 @@ parseProg src = (fromList terseSrc, jt, length terseSrc) where
 
   getJT :: String -> [(Int, Int)] -> [Int] -> Int -> [(Int, Int)]
   getJT [] jt [] _ = jt
-  getJT [] _ lStack _ = error "unmatched left brackets"
+  getJT [] _ lStack _ = error "unmatched left bracket"
   getJT ('[':is) jt lStack ip = getJT is jt (ip:lStack) (ip+1)
+  getJT (']':_) _ [] _ = error "unmatched right bracket"
   getJT (']':is) jt (l:lStack) ip = getJT is ((ip, l):(l, ip):jt) lStack (ip+1)
   getJT (_:is) jt lStack ip = getJT is jt lStack (ip+1)
 
