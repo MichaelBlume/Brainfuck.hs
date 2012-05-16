@@ -8,37 +8,35 @@ module BFRead
 
 import RS
 import Data.Array
+import Control.Monad
 import qualified Data.Map as Map
 
 type JumpTable = Map.Map Int Int
 type BFProg = Array Int Char
 
-type BFRead = (BFProg, JumpTable, Int)
+data BFRead = BFRead {
+    prog :: BFProg,
+    jumps :: JumpTable,
+    len :: Int}
 
 lookupJump :: JumpTable -> Int -> Int
 lookupJump = (Map.!)
 
 
 getJT :: RS BFRead state JumpTable
-getJT = do
-  (_prog, jt, _length) <- ask
-  return jt
+getJT = liftM jumps ask
 
 lookupJumpM :: Int -> RS BFRead state Int
-lookupJumpM i = getJT >>= (return . (`lookupJump` i))
+lookupJumpM i = liftM (`lookupJump` i) getJT
 
 lookupIns :: Int -> RS BFRead state Char
-lookupIns i = do
-  (prog, _jt, _length) <- ask
-  return $ prog ! i
+lookupIns i = liftM ((!i) . prog) ask
 
 getLength :: RS BFRead state Int
-getLength = do
-  (_prog, _jt, length) <- ask
-  return length
+getLength = liftM len ask
 
 parseProg :: String -> BFRead
-parseProg src = (fromList terseSrc, jt, length terseSrc) where
+parseProg src = BFRead (fromList terseSrc) jt (length terseSrc) where
   terseSrc = filter (`elem` "<>+-.,[]") src
   jt = Map.fromList $ getJT terseSrc [] [] 0
 
