@@ -25,7 +25,7 @@ type MC = Maybe Char
 modTape :: (Tape -> Tape) -> RS read BFState MC
 modTape tf = do
   state <- get
-  put state {tape = (tf . tape $ state)}
+  put state {tape = tf . tape $ state}
   return Nothing
 
 readTapeM :: RS read BFState Int
@@ -46,7 +46,7 @@ tapeZero :: RS read BFState Bool
 tapeZero = liftM (==0) readTapeM
 
 blankState :: String -> BFState
-blankState inputString = BFState blankTape 0 inputString
+blankState = BFState blankTape 0
 
 getCharS :: RS read BFState Char
 getCharS = do
