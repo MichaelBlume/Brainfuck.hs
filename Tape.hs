@@ -9,7 +9,10 @@ module Tape
 , blankTape
 ) where
 
-data Tape = Tape [Int] Int [Int]
+data Tape = Tape {
+    left :: [Int],
+    val :: Int,
+    right :: [Int]}
 
 advance (Tape l c []) = Tape (c:l) 0 []
 advance (Tape l c (r:rs)) = Tape (c:l) r rs
@@ -21,9 +24,9 @@ increment (Tape l c r) = Tape l (c + 1) r
 
 decrement (Tape l c r) = Tape l (c - 1) r
 
-writeTape nc (Tape l c r) = Tape l nc r
+writeTape nc tape = tape {val = nc}
 
-readTape (Tape _ c _) = c
+readTape = val
 
 blankTape = Tape [] 0 []
 
