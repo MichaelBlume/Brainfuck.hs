@@ -47,6 +47,7 @@ doJump = do
   ip' <- lookupJumpM ip
   setIP ip'
 
+getIn :: BFMon Char
 getIn = getIP >>= lookupIns
 
 runProg :: String -> String -> String
