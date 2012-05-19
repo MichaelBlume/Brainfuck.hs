@@ -36,9 +36,9 @@ getLength :: RS BFRead state Int
 getLength = liftM len ask
 
 parseProg :: String -> BFRead
-parseProg src = BFRead (fromList terseSrc) jt (length terseSrc) where
+parseProg src = BFRead (fromList terseSrc) mappedJT (length terseSrc) where
   terseSrc = filter (`elem` "<>+-.,[]") src
-  jt = Map.fromList $ buildJT terseSrc [] [] 0
+  mappedJT = Map.fromList $ buildJT terseSrc [] [] 0
 
   buildJT :: String -> [(Int, Int)] -> [Int] -> Int -> [(Int, Int)]
   buildJT [] jt [] _ = jt
