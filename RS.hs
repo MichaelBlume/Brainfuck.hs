@@ -5,8 +5,6 @@ module RS
 , get
 ) where
 
-import System.IO
-
 newtype RS read state a = RS {
   runRS :: read -> state -> (state, a)
 }
