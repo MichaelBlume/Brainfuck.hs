@@ -21,6 +21,7 @@ doCommand ',' = getCharS >>= (modTape . writeTape . ord)
 doCommand '.' = liftM (Just . chr) readTapeM
 doCommand '[' = tapeZero >>= (`when` doJump) >> return Nothing
 doCommand ']' = tapeZero >>= (`unless` doJump) >> return Nothing
+doCommand _ = error "Nonsensical command -- was program parsed correctly?"
 
 loopBF :: BFMon String
 loopBF = do
