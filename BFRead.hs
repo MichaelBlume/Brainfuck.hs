@@ -38,14 +38,14 @@ getLength = liftM len ask
 parseProg :: String -> BFRead
 parseProg src = BFRead (fromList terseSrc) jt (length terseSrc) where
   terseSrc = filter (`elem` "<>+-.,[]") src
-  jt = Map.fromList $ getJT terseSrc [] [] 0
+  jt = Map.fromList $ buildJT terseSrc [] [] 0
 
-  getJT :: String -> [(Int, Int)] -> [Int] -> Int -> [(Int, Int)]
-  getJT [] jt [] _ = jt
-  getJT [] _ lStack _ = error "unmatched left bracket"
-  getJT ('[':is) jt lStack ip = getJT is jt (ip:lStack) (ip+1)
-  getJT (']':_) _ [] _ = error "unmatched right bracket"
-  getJT (']':is) jt (l:lStack) ip = getJT is ((ip, l):(l, ip):jt) lStack (ip+1)
-  getJT (_:is) jt lStack ip = getJT is jt lStack (ip+1)
+  buildJT :: String -> [(Int, Int)] -> [Int] -> Int -> [(Int, Int)]
+  buildJT [] jt [] _ = jt
+  buildJT [] _  _  _ = error "unmatched left bracket"
+  buildJT ('[':is) jt lStack ip = buildJT is jt (ip:lStack) (ip+1)
+  buildJT (']':_) _ [] _ = error "unmatched right bracket"
+  buildJT (']':is) jt (l:lStack) ip = buildJT is ((ip, l):(l, ip):jt) lStack (ip+1)
+  buildJT (_:is) jt lStack ip = buildJT is jt lStack (ip+1)
 
   fromList l = array (0, length l - 1) $ zip [0..] l
