@@ -10,9 +10,9 @@ module Tape
 ) where
 
 data Tape = Tape {
-    left :: [Int],
+    _left :: [Int],
     val :: Int,
-    right :: [Int]}
+    _right :: [Int]}
 
 advance :: Tape -> Tape
 advance (Tape l c []) = Tape (c:l) 0 []

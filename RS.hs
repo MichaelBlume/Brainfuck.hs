@@ -16,7 +16,7 @@ bind m1 f = RS helper where
 
 instance Monad (RS read state) where
   (>>=) = bind
-  return x = RS $ \r s -> (s, x)
+  return x = RS $ \_r s -> (s, x)
 
 -- emulate read
 ask :: RS read state read
@@ -24,6 +24,6 @@ ask = RS $ \r s -> (s, r)
 
 -- emulate state
 put :: state -> RS read state ()
-put s' = RS $ \r _s -> (s', ())
+put s' = RS $ \_r _s -> (s', ())
 get :: RS read state state
-get = RS $ \r s -> (s, s)
+get = RS $ \_r s -> (s, s)
