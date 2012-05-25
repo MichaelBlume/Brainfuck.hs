@@ -52,9 +52,9 @@ getIn = getIP >>= lookupIns
 
 runProg :: String -> String -> String
 runProg progSrc inputS = result where
-  (_state, result) = runRS loopBF prog state
   prog = parseProg progSrc
   state = blankState inputS
+  (_state, result) = runRS loopBF prog state
 
 main :: IO ()
 main = do
