@@ -19,15 +19,11 @@ data BFRead = BFRead {
     jumps :: JumpTable,
     len :: Int}
 
-lookupJump :: JumpTable -> Int -> Int
-lookupJump = (Map.!)
-
-
-getJT :: RS BFRead state JumpTable
-getJT = liftM jumps ask
+lookupJump :: Int -> JumpTable -> Int
+lookupJump n = (Map.! n)
 
 lookupJumpM :: Int -> RS BFRead state Int
-lookupJumpM i = liftM (`lookupJump` i) getJT
+lookupJumpM i = liftM (lookupJump i . jumps) ask
 
 lookupIns :: Int -> RS BFRead state Char
 lookupIns i = liftM ((!i) . prog) ask
