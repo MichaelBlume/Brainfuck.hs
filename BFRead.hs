@@ -32,16 +32,20 @@ getLength :: RS BFRead state Int
 getLength = liftM len ask
 
 parseProg :: String -> BFRead
-parseProg src = BFRead (fromList terseSrc) mappedJT (length terseSrc) where
+parseProg src = BFRead srcArray mappedJT srcLength where
   terseSrc = filter (`elem` "<>+-.,[]") src
-  mappedJT = Map.fromList $ buildJT terseSrc [] [] 0
 
-  buildJT :: String -> [(Int, Int)] -> [Int] -> Int -> [(Int, Int)]
-  buildJT [] jt [] _ = jt
-  buildJT [] _  _  _ = error "unmatched left bracket"
-  buildJT ('[':is) jt lStack ip = buildJT is jt (ip:lStack) (ip+1)
-  buildJT (']':_) _ [] _ = error "unmatched right bracket"
-  buildJT (']':is) jt (l:lStack) ip = buildJT is ((ip, l):(l, ip):jt) lStack (ip+1)
-  buildJT (_:is) jt lStack ip = buildJT is jt lStack (ip+1)
+  srcLength = length terseSrc
+  enumSrc = zip [0..] terseSrc
+  srcArray = array (0, srcLength - 1) $ enumSrc
 
-  fromList l = array (0, length l - 1) $ zip [0..] l
+  mappedJT = Map.fromList $ buildJT enumSrc [] []
+
+  buildJT :: [(Int,Char)] -> [(Int, Int)] -> [Int] -> [(Int, Int)]
+  buildJT [] jt [] = jt
+  buildJT [] _  _  = error "unmatched left bracket"
+  buildJT ((_,']'):_) _ [] = error "unmatched right bracket"
+  buildJT ((ip,'['):is) jt lStack = buildJT is jt (ip:lStack)
+  buildJT ((ip,']'):is) jt (l:lStack) = buildJT is ((ip, l):(l, ip):jt) lStack
+  buildJT (_:is) jt lStack = buildJT is jt lStack
+
