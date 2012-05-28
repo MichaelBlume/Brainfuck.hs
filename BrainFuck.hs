@@ -44,7 +44,7 @@ endLoop = do
 doJump :: BFMon ()
 doJump = do
   ip <- getIP
-  ip' <- lookupJumpM ip
+  ip' <- lookupJump ip
   setIP ip'
 
 getIn :: BFMon Char

@@ -1,5 +1,5 @@
 module BFRead
-( lookupJumpM
+( lookupJump
 , lookupIns
 , getLength
 , parseProg
@@ -19,11 +19,11 @@ data BFRead = BFRead {
     jumps :: JumpTable,
     len :: Int}
 
-lookupJump :: Int -> JumpTable -> Int
-lookupJump n = (Map.! n)
+lookupJumpF :: Int -> JumpTable -> Int
+lookupJumpF n = (Map.! n)
 
-lookupJumpM :: Int -> RS BFRead state Int
-lookupJumpM i = liftM (lookupJump i . jumps) ask
+lookupJump :: Int -> RS BFRead state Int
+lookupJump i = liftM (lookupJumpF i . jumps) ask
 
 lookupIns :: Int -> RS BFRead state Char
 lookupIns i = liftM ((!i) . prog) ask
