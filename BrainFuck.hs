@@ -39,7 +39,7 @@ endLoop :: BFMon String
 endLoop = do
   done <- liftM2 (==) getLength getIP
   if done
-    then return []
+    then return ""
     else loopBF
 
 runProg :: String -> String -> String
