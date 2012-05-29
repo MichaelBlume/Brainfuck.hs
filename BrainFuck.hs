@@ -60,11 +60,13 @@ main :: IO ()
 main = do
   args <- getArgs
   if null args
-    then putStr "Must include filename of BF program"
-    else do
-      progSrc <- readFile $ head args
-      inputS <- getContents
-      fastPutStr $ runProg progSrc inputS
+    then putStr "Must include filename of BF program\n"
+    else runFile $ head args
+
+runFile filename = do
+  progSrc <- readFile filename
+  inputS <- getContents
+  fastPutStr $ runProg progSrc inputS
 
 fastPutStr :: String -> IO ()
 fastPutStr = foldr helper (return ()) where
