@@ -28,13 +28,12 @@ doJump = getIP >>= lookupJump >>= setIP
 
 loopBF :: BFMon String
 loopBF = do
-  ins <- getIn
-  mc <- doCommand ins
+  mc <- getIP >>= lookupIns >>= doCommand
   incIP
-  result <- endLoop
-  case mc of
-    Nothing -> return result
-    Just c -> return $ c:result
+  liftM (mayPush mc) endLoop
+
+mayPush Nothing s = s
+mayPush (Just c) s = c:s
 
 endLoop :: BFMon String
 endLoop = do
@@ -43,9 +42,6 @@ endLoop = do
   if ip == l
     then return []
     else loopBF
-
-getIn :: BFMon Char
-getIn = getIP >>= lookupIns
 
 runProg :: String -> String -> String
 runProg progSrc inputS = result where
