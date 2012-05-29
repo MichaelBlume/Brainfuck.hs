@@ -23,6 +23,9 @@ doCommand '[' = tapeZero >>= (`when` doJump) >> return Nothing
 doCommand ']' = tapeZero >>= (`unless` doJump) >> return Nothing
 doCommand _ = error "Nonsensical command -- was program parsed correctly?"
 
+doJump :: BFMon ()
+doJump = getIP >>= lookupJump >>= setIP
+
 loopBF :: BFMon String
 loopBF = do
   ins <- getIn
@@ -40,9 +43,6 @@ endLoop = do
   if ip == l
     then return []
     else loopBF
-
-doJump :: BFMon ()
-doJump = getIP >>= lookupJump >>= setIP
 
 getIn :: BFMon Char
 getIn = getIP >>= lookupIns
