@@ -55,19 +55,8 @@ runProg progSrc inputS = result where
 
 main :: IO ()
 main = do
+  hSetBuffering stdout NoBuffering
   args <- getArgs
   if null args
     then putStr "Must include filename of BF program\n"
-    else runFile $ head args
-
-runFile filename = do
-  progSrc <- readFile filename
-  inputS <- getContents
-  fastPutStr $ runProg progSrc inputS
-
-fastPutStr :: String -> IO ()
-fastPutStr = foldr helper (return ()) where
-  helper c rst = putChar c >> hFlush stdout >> rst
-
-
-
+    else (readFile $ head args) >>= (interact . runProg)
