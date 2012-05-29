@@ -42,10 +42,7 @@ endLoop = do
     else loopBF
 
 doJump :: BFMon ()
-doJump = do
-  ip <- getIP
-  ip' <- lookupJump ip
-  setIP ip'
+doJump = getIP >>= lookupJump >>= setIP
 
 getIn :: BFMon Char
 getIn = getIP >>= lookupIns
