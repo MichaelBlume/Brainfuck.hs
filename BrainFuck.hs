@@ -12,36 +12,30 @@ import System.IO
 
 type BFMon = RS BFRead BFState
 
-doCommand :: Char -> BFMon MC
+doCommand :: Char -> BFMon ()
 doCommand '<' = modTape retreat
 doCommand '>' = modTape advance
 doCommand '+' = modTape increment
 doCommand '-' = modTape decrement
 doCommand ',' = getCharS >>= (modTape . writeTape . ord)
 doCommand '.' = printTape
-doCommand '[' = tapeZero >>= (`when` doJump) >> return Nothing
-doCommand ']' = tapeZero >>= (`unless` doJump) >> return Nothing
+doCommand '[' = tapeZero >>= (`when` doJump)
+doCommand ']' = tapeZero >>= (`unless` doJump)
 doCommand _ = error "Nonsensical command -- was program parsed correctly?"
 
 doJump :: BFMon ()
 doJump = getIP >>= lookupJump >>= setIP
 
-loopBF :: BFMon String
+loopBF :: BFMon ()
 loopBF = do
-  mc <- getIP >>= lookupIns >>= doCommand
+  getIP >>= lookupIns >>= doCommand
   incIP
-  liftM (mayPush mc) endLoop
+  endLoop
 
-mayPush :: Maybe a -> [a] -> [a]
-mayPush Nothing s = s
-mayPush (Just c) s = c:s
-
-endLoop :: BFMon String
+endLoop :: BFMon ()
 endLoop = do
   done <- liftM2 (==) getLength getIP
-  if done
-    then return ""
-    else loopBF
+  unless done loopBF
 
 runProg :: String -> String -> String
 runProg progSrc inputS = getOutput endState where
