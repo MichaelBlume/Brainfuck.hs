@@ -9,24 +9,39 @@ module BFState
 , BFState ()
 , getCharS
 , MC
+, printTape
+, getOutput
 ) where
 
 import RS
 import Tape
 import Control.Monad
+import Data.Char
 
 data BFState = BFState { tape :: Tape
                        , instructionPointer :: Int
+                       , prependChars :: String -> String
                        , remainingInput :: String
                        }
 
 type MC = Maybe Char
+
+getOutput :: BFState -> String
+getOutput s = prependChars s []
 
 modTape :: (Tape -> Tape) -> RS read BFState MC
 modTape tf = do
   state <- get
   put state {tape = tf . tape $ state}
   return Nothing
+
+printTape :: RS read BFState MC
+printTape = liftM chr readTapeM >>= writeChar >> return Nothing
+
+writeChar :: Char -> RS read BFState ()
+writeChar c = do
+  state <- get
+  put state {prependChars = (prependChars state) . (c:)}
 
 readTapeM :: RS read BFState Int
 readTapeM = liftM (readTape . tape) get
@@ -46,7 +61,7 @@ tapeZero :: RS read BFState Bool
 tapeZero = liftM (==0) readTapeM
 
 blankState :: String -> BFState
-blankState = BFState blankTape 0
+blankState = BFState blankTape 0 id
 
 getCharS :: RS read BFState Char
 getCharS = do

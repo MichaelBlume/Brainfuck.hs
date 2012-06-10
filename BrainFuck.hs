@@ -18,7 +18,7 @@ doCommand '>' = modTape advance
 doCommand '+' = modTape increment
 doCommand '-' = modTape decrement
 doCommand ',' = getCharS >>= (modTape . writeTape . ord)
-doCommand '.' = liftM (Just . chr) readTapeM
+doCommand '.' = printTape
 doCommand '[' = tapeZero >>= (`when` doJump) >> return Nothing
 doCommand ']' = tapeZero >>= (`unless` doJump) >> return Nothing
 doCommand _ = error "Nonsensical command -- was program parsed correctly?"
@@ -44,10 +44,11 @@ endLoop = do
     else loopBF
 
 runProg :: String -> String -> String
-runProg progSrc inputS = result where
+runProg progSrc inputS = getOutput endState where
   prog = parseProg progSrc
   state = blankState inputS
-  (_state, result) = runRS loopBF prog state
+  (endState, _result) = runRS loopBF prog state
+
 
 main :: IO ()
 main = do
