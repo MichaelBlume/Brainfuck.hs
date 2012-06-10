@@ -8,6 +8,7 @@ module BFRead
 
 import RS
 import Data.Array
+import Data.Tuple
 import Control.Monad
 import qualified Data.Map as Map
 
@@ -39,13 +40,14 @@ parseProg src = BFRead srcArray mappedJT srcLength where
   enumSrc = zip [0..] terseSrc
   srcArray = array (0, srcLength - 1) $ enumSrc
 
-  mappedJT = Map.fromList $ buildJT enumSrc [] []
+  mappedJT = Map.fromList . appReverse $ buildJT enumSrc [] []
+  appReverse l = l ++ (map swap l)
 
   buildJT :: [(Int,Char)] -> [(Int, Int)] -> [Int] -> [(Int, Int)]
-  buildJT [] jt [] = jt
-  buildJT [] _  _  = error "unmatched left bracket"
-  buildJT ((_,']'):_) _ [] = error "unmatched right bracket"
-  buildJT ((ip,'['):is) jt lStack = buildJT is jt (ip:lStack)
-  buildJT ((ip,']'):is) jt (l:lStack) = buildJT is ((ip, l):(l, ip):jt) lStack
-  buildJT (_:is) jt lStack = buildJT is jt lStack
+  buildJT []            jt []         = jt
+  buildJT []            _  _          = error "unmatched left bracket"
+  buildJT ((_, ']'):_)  _  []         = error "unmatched right bracket"
+  buildJT ((ip,'['):is) jt lStack     = buildJT is jt           (ip:lStack)
+  buildJT ((ip,']'):is) jt (l:lStack) = buildJT is ((l, ip):jt) lStack
+  buildJT (_:is)        jt lStack     = buildJT is jt           lStack
 
