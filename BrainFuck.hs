@@ -32,6 +32,7 @@ loopBF = do
   incIP
   liftM (mayPush mc) endLoop
 
+mayPush :: Maybe a -> [a] -> [a]
 mayPush Nothing s = s
 mayPush (Just c) s = c:s
 
