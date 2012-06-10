@@ -53,6 +53,5 @@ main :: IO ()
 main = do
   hSetBuffering stdout NoBuffering
   args <- getArgs
-  if null args
-    then putStr "Must include filename of BF program\n"
-    else (readFile $ head args) >>= (interact . runProg)
+  when (null args) $ error "Must include filename of BF program"
+  (readFile $ head args) >>= (interact . runProg)
