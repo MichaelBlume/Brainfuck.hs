@@ -7,7 +7,6 @@ module BFState
 , tapeZero
 , BFState ()
 , printTape
-, getOutput
 , readToTape
 ) where
 
@@ -18,12 +17,8 @@ import Data.Char
 
 data BFState = BFState { tape :: Tape
                        , instructionPointer :: Int
-                       , prependChars :: String -> String
                        , remainingInput :: String
                        }
-
-getOutput :: BFState -> String
-getOutput s = prependChars s []
 
 readToTape = getCharS >>= (modTape . writeTape . ord)
 
@@ -34,11 +29,6 @@ modTape tf = do
 
 printTape :: RS read BFState ()
 printTape = liftM chr readTapeM >>= writeChar
-
-writeChar :: Char -> RS read BFState ()
-writeChar c = do
-  state <- get
-  put state {prependChars = (prependChars state) . (c:)}
 
 readTapeM :: RS read BFState Int
 readTapeM = liftM (readTape . tape) get
@@ -58,7 +48,7 @@ tapeZero :: RS read BFState Bool
 tapeZero = liftM (==0) readTapeM
 
 blankState :: String -> BFState
-blankState = BFState blankTape 0 id
+blankState = BFState blankTape 0
 
 getCharS :: RS read BFState Char
 getCharS = do

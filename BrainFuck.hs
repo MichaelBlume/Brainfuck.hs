@@ -38,10 +38,10 @@ endLoop = do
   unless done loopBF
 
 runProg :: String -> String -> String
-runProg progSrc inputS = getOutput endState where
+runProg progSrc inputS = putChars [] where
   prog = parseProg progSrc
   state = blankState inputS
-  (endState, _result) = runRS loopBF prog state
+  (_endState, _result, putChars) = runRS loopBF prog state
 
 
 main :: IO ()
