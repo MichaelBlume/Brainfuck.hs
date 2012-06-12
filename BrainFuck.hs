@@ -17,7 +17,7 @@ doCommand '<' = modTape retreat
 doCommand '>' = modTape advance
 doCommand '+' = modTape increment
 doCommand '-' = modTape decrement
-doCommand ',' = getCharS >>= (modTape . writeTape . ord)
+doCommand ',' = readToTape
 doCommand '.' = printTape
 doCommand '[' = tapeZero >>= (`when` doJump)
 doCommand ']' = tapeZero >>= (`unless` doJump)

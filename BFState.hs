@@ -1,15 +1,14 @@
 module BFState
 ( modTape
-, readTapeM
 , getIP
 , setIP
 , incIP
 , blankState
 , tapeZero
 , BFState ()
-, getCharS
 , printTape
 , getOutput
+, readToTape
 ) where
 
 import RS
@@ -25,6 +24,8 @@ data BFState = BFState { tape :: Tape
 
 getOutput :: BFState -> String
 getOutput s = prependChars s []
+
+readToTape = getCharS >>= (modTape . writeTape . ord)
 
 modTape :: (Tape -> Tape) -> RS read BFState ()
 modTape tf = do
