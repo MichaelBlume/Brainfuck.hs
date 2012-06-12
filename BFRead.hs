@@ -45,7 +45,7 @@ parseProg src = BFRead srcArray mappedJT srcLength where
 
   buildJT :: [(Int,Char)] -> [(Int, Int)] -> [Int] -> [(Int, Int)]
   buildJT []            jt []         = jt
-  buildJT []            _  _          = error "unmatched left bracket"
+  buildJT []            _  _lstack    = error "unmatched left bracket"
   buildJT ((_, ']'):_)  _  []         = error "unmatched right bracket"
   buildJT ((ip,'['):is) jt lStack     = buildJT is jt           (ip:lStack)
   buildJT ((ip,']'):is) jt (l:lStack) = buildJT is ((l, ip):jt) lStack
