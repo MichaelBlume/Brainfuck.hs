@@ -12,7 +12,7 @@ import System.IO
 
 type BFMon = RS BFRead BFState
 
-doCommand :: Char -> BFMon MC
+doCommand :: Char -> BFMon ()
 doCommand '<' = modTape retreat
 doCommand '>' = modTape advance
 doCommand '+' = modTape increment
@@ -26,14 +26,11 @@ doCommand _ = error "Nonsensical command -- was program parsed correctly?"
 doJump :: BFMon ()
 doJump = getIP >>= lookupJump >>= setIP
 
-loopBF :: BFMon String
+loopBF :: BFMon ()
 loopBF = do
-  mc <- getIP >>= lookupIns >>= doCommand
+  getIP >>= lookupIns >>= doCommand
   incIP
-  liftM (mayPush mc) endLoop
-
-mayPush Nothing s = s
-mayPush (Just c) s = c:s
+  endLoop
 
 endLoop :: BFMon String
 endLoop = do

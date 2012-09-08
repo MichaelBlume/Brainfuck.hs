@@ -29,11 +29,10 @@ type MC = Maybe Char
 getOutput :: BFState -> String
 getOutput s = prependChars s []
 
-modTape :: (Tape -> Tape) -> RS read BFState MC
+modTape :: (Tape -> Tape) -> RS read BFState ()
 modTape tf = do
   state <- get
   put state {tape = tf . tape $ state}
-  return Nothing
 
 printTape :: RS read BFState MC
 printTape = liftM chr readTapeM >>= writeChar >> return Nothing
