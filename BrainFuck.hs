@@ -38,7 +38,7 @@ mayPush (Just c) s = c:s
 
 endLoop :: BFMon String
 endLoop = do
-  done <- liftM2 (==) getLength getIP
+  done <- (getIP >>= checkDone)
   if done
     then return ""
     else loopBF

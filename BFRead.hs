@@ -1,7 +1,7 @@
 module BFRead
 ( lookupJump
 , lookupIns
-, getLength
+, checkDone
 , parseProg
 , BFRead ()
 ) where
@@ -29,8 +29,8 @@ lookupJump i = liftM (lookupJumpF i . jumps) ask
 lookupIns :: Int -> RS BFRead state Char
 lookupIns i = liftM ((!i) . prog) ask
 
-getLength :: RS BFRead state Int
-getLength = liftM len ask
+checkDone :: Int -> RS BFRead state Bool
+checkDone x = liftM ((==x) . len) ask
 
 parseProg :: String -> BFRead
 parseProg src = BFRead srcArray mappedJT srcLength where
