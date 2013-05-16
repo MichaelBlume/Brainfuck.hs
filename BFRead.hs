@@ -38,10 +38,10 @@ parseProg src = BFRead srcArray mappedJT srcLength where
 
   srcLength = length terseSrc
   enumSrc = zip [0..] terseSrc
-  srcArray = array (0, srcLength - 1) $ enumSrc
+  srcArray = array (0, srcLength - 1) enumSrc
 
   mappedJT = Map.fromList . appReverse $ buildJT enumSrc [] []
-  appReverse l = l ++ (map swap l)
+  appReverse l = l ++ map swap l
 
   buildJT :: [(Int,Char)] -> [(Int, Int)] -> [Int] -> [(Int, Int)]
   buildJT []            jt []         = jt
