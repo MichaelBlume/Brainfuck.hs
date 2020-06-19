@@ -5,6 +5,9 @@ module RS
 , get
 ) where
 
+import Control.Applicative -- Otherwise you can't do the Applicative instance.
+import Control.Monad (liftM, ap)
+
 newtype RS read state a = RS {
   runRS :: read -> state -> (state, a)
 }
@@ -17,6 +20,13 @@ bind m1 f = RS helper where
 instance Monad (RS read state) where
   (>>=) = bind
   return x = RS $ \_r s -> (s, x)
+
+instance Functor (RS read state) where
+  fmap = liftM
+
+instance Applicative (RS read state) where
+  pure  = return
+  (<*>) = ap
 
 -- emulate read
 ask :: RS read state read
